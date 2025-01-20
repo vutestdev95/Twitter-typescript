@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import userServices from '~/services/user.services'
 
 export const loginController = (req: Request, res: Response) => {
   res.json({
@@ -9,4 +10,29 @@ export const loginController = (req: Request, res: Response) => {
       }
     ]
   })
+}
+
+export const registerController = async (req: Request, res: Response) => {
+  const { email, password } = req.body
+
+  try {
+    const result = await userServices.register({
+      email,
+      password
+    })
+    if (!result.acknowledged) {
+      res.status(400).json({
+        error: 'Register Failed'
+      })
+      return
+    }
+    res.json({
+      error: 'Register Success'
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
+      error: 'Register Failed'
+    })
+  }
 }
