@@ -7,25 +7,21 @@ import { jwtExpiresIn, tokenTypes } from '~/constants/enum'
 
 class UserServices {
   async register(payload: UserRegisterReqBody) {
-    try {
-      const result = await databaseService.users.insertOne(
-        new User({
-          ...payload,
-          date_of_birth: new Date(payload.date_of_birth),
-          password: hashPassword(payload.password)
-        })
-      )
-      const user_id = result.insertedId.toString()
-      const [accessToken, refreshToken] = await Promise.all([
-        this.signAccessToken(user_id),
-        this.signRefreshToken(user_id)
-      ])
-      return {
-        accessToken,
-        refreshToken
-      }
-    } catch {
-      throw new Error('Register fail')
+    const result = await databaseService.users.insertOne(
+      new User({
+        ...payload,
+        date_of_birth: new Date(payload.date_of_birth),
+        password: hashPassword(payload.password)
+      })
+    )
+    const user_id = result.insertedId.toString()
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signAccessToken(user_id),
+      this.signRefreshToken(user_id)
+    ])
+    return {
+      accessToken,
+      refreshToken
     }
   }
 
