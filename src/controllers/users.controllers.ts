@@ -18,24 +18,11 @@ export const registerController = async (
   req: Request<core.ParamsDictionary, any, UserRegisterReqBody, any, Locals>,
   res: Response
 ) => {
-  try {
-    const result = await userServices.register({
-      ...req.body
-    })
-    if (!result) {
-      res.status(400).json({
-        error: 'Register Failed'
-      })
-      return
-    }
-    res.json({
-      message: 'Register Success',
-      ...result
-    })
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({
-      error: 'Register Failed'
-    })
-  }
+  const result = await userServices.register({
+    ...req.body
+  })
+  res.json({
+    message: 'Register Success',
+    ...result
+  })
 }
