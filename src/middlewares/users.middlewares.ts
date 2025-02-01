@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import userServices from '~/services/user.services'
+import { ErrorWithStatus } from '~/models/Error'
+import { USER_MESSAGES } from '~/constants/messages'
 
 export const loginValidator = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body
@@ -15,39 +17,53 @@ export const loginValidator = async (req: Request, res: Response, next: NextFunc
 
 export const registerValidator = checkSchema({
   name: {
-    notEmpty: true,
-    isString: true,
+    notEmpty: {
+      errorMessage: USER_MESSAGES.NAME_REQUIRED
+    },
+    isString: {
+      errorMessage: USER_MESSAGES.NAME_STRING
+    },
     isLength: {
       options: {
         min: 1,
         max: 255
-      }
+      },
+      errorMessage: USER_MESSAGES.NAME_LENGTH
     },
     trim: true
   },
 
   email: {
-    notEmpty: true,
-    isEmail: true,
+    notEmpty: {
+      errorMessage: USER_MESSAGES.EMAIL_REQUIRED
+    },
+    isEmail: {
+      errorMessage: USER_MESSAGES.EMAIL_INVALID
+    },
     trim: true,
     custom: {
       options: async (value) => {
         const isExistEmail = await userServices.checkEmailExist(value)
         if (isExistEmail) {
-          throw new Error('Email already exists')
+          throw new ErrorWithStatus({ message: USER_MESSAGES.EMAIL_EXISTS, status: 401 })
         }
         return true
       }
     }
   },
   password: {
-    notEmpty: true,
-    isString: true,
+    notEmpty: {
+      errorMessage: USER_MESSAGES.PASSWORD_REQUIRED
+    },
+    isString: {
+      errorMessage: USER_MESSAGES.PASSWORD_STRING
+    },
     isLength: {
       options: {
         min: 1,
         max: 50
-      }
+      },
+      errorMessage: USER_MESSAGES.PASSWORD_LENGTH
     },
     isStrongPassword: {
       options: {
@@ -57,18 +73,23 @@ export const registerValidator = checkSchema({
         minNumbers: 1,
         minSymbols: 1
       },
-      errorMessage: 'Password must contain at least 1 character, 1 lower, 1 upper, 1 number, 1 symbol'
+      errorMessage: USER_MESSAGES.PASSWORD_WEAK
     },
     trim: true
   },
   confirm_password: {
-    notEmpty: true,
-    isString: true,
+    notEmpty: {
+      errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_REQUIRED
+    },
+    isString: {
+      errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_STRING
+    },
     isLength: {
       options: {
         min: 1,
         max: 50
-      }
+      },
+      errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_LENGTH
     },
     isStrongPassword: {
       options: {
@@ -78,13 +99,13 @@ export const registerValidator = checkSchema({
         minNumbers: 1,
         minSymbols: 1
       },
-      errorMessage: 'Password must contain at least 1 character, 1 lower, 1 upper, 1 number, 1 symbol'
+      errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_WEAK
     },
     custom: {
       options: (value, { req }) => {
         return value === req.body.password
       },
-      errorMessage: 'Confirm password must match password'
+      errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_MISMATCH
     },
     trim: true
   },
@@ -93,7 +114,8 @@ export const registerValidator = checkSchema({
       options: {
         strict: true,
         strictSeparator: true
-      }
+      },
+      errorMessage: USER_MESSAGES.DATE_OF_BIRTH_INVALID
     }
   }
 })
