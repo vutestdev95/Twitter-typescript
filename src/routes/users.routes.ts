@@ -6,7 +6,7 @@ import { wrapRequestHandler } from '~/utils/handlers'
 
 const usersRouter = express.Router()
 
-usersRouter.post('/login', loginValidator, loginController)
+usersRouter.post('/login', validate(loginValidator), wrapRequestHandler(loginController))
 
 /**
  Register Route

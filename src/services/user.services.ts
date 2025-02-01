@@ -15,10 +15,15 @@ class UserServices {
       })
     )
     const user_id = result.insertedId.toString()
-    const [accessToken, refreshToken] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
-    ])
+    const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(user_id)
+    return {
+      accessToken,
+      refreshToken
+    }
+  }
+
+  async login(user_id: string) {
+    const [accessToken, refreshToken] = await this.signAccessAndRefreshToken(user_id)
     return {
       accessToken,
       refreshToken
@@ -46,12 +51,16 @@ class UserServices {
     return signToken({
       payload: {
         user_id,
-        tokenType: tokenTypes.ACCESS_TOKEN
+        tokenType: tokenTypes.REFRESH_TOKEN
       },
       option: {
         expiresIn: jwtExpiresIn.REFRESH_TOKEN
       }
     })
+  }
+
+  private signAccessAndRefreshToken(user_id: string) {
+    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
 }
 
