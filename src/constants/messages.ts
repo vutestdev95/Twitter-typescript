@@ -8,6 +8,8 @@ export enum USER_MESSAGES {
   EMAIL_INVALID = 'Invalid email format',
   EMAIL_EXISTS = 'Email already exists',
 
+  USER_NOT_FOUND = 'User not found',
+
   PASSWORD_REQUIRED = 'Password is required',
   PASSWORD_STRING = 'Password must be a string',
   PASSWORD_LENGTH = 'Password must be between 1 and 50 characters',
@@ -19,5 +21,8 @@ export enum USER_MESSAGES {
   CONFIRM_PASSWORD_WEAK = 'Confirm password must contain at least 1 character, 1 lowercase, 1 uppercase, 1 number, and 1 symbol',
   CONFIRM_PASSWORD_MISMATCH = 'Confirm password must match password',
 
-  DATE_OF_BIRTH_INVALID = 'Invalid date of birth format (must be ISO 8601)'
+  DATE_OF_BIRTH_INVALID = 'Invalid date of birth format (must be ISO 8601)',
+
+  LOGIN_SUCCESS = 'Login success',
+  REGISTER_SUCCESS = 'Register success'
 }
