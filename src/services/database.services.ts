@@ -1,6 +1,7 @@
 import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb'
 import 'dotenv/config'
 import User from '~/models/schemas/User.schema'
+import RefreshToken from '~/models/schemas/RefreshToken.schema'
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_USERPASSWORD}@twitter.vrhly.mongodb.net/?retryWrites=true&w=majority&appName=twitter`
 
@@ -20,6 +21,10 @@ class DatabaseServices {
 
   public get users(): Collection<User> {
     return this.db.collection<User>(process.env.DB_USERS_COLLECTION!)
+  }
+
+  public get refreshTokens(): Collection<RefreshToken> {
+    return this.db.collection<RefreshToken>(process.env.DB_REFRESHTOKENS_COLLECTION!)
   }
 
   public async connectDatabase() {

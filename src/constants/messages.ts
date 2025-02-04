@@ -8,7 +8,7 @@ export enum USER_MESSAGES {
   EMAIL_INVALID = 'Invalid email format',
   EMAIL_EXISTS = 'Email already exists',
 
-  USER_NOT_FOUND = 'User not found',
+  EMAIL_OR_PASSWORD_INCORRECT = 'Email or password is incorrect',
 
   PASSWORD_REQUIRED = 'Password is required',
   PASSWORD_STRING = 'Password must be a string',
