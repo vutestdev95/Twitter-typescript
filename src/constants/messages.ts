@@ -24,5 +24,8 @@ export enum USER_MESSAGES {
   DATE_OF_BIRTH_INVALID = 'Invalid date of birth format (must be ISO 8601)',
 
   LOGIN_SUCCESS = 'Login success',
-  REGISTER_SUCCESS = 'Register success'
+  REGISTER_SUCCESS = 'Register success',
+  LOGOUT_SUCCESS = 'Logout success',
+
+  ACCESS_TOKEN_IS_REQUIRED = 'Access token is required'
 }
