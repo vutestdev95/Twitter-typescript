@@ -1,7 +1,7 @@
 import { Locals, Request, Response } from 'express'
 import userServices from '~/services/user.services'
 import * as core from 'express-serve-static-core'
-import { UserRegisterReqBody } from '~/models/requests/user.requests'
+import { UserLogoutBody, UserRegisterReqBody } from '~/models/requests/user.requests'
 import { ObjectId } from 'mongodb'
 import User from '~/models/schemas/User.schema'
 import { USER_MESSAGES } from '~/constants/messages'
@@ -25,6 +25,17 @@ export const registerController = async (
   })
   res.json({
     message: USER_MESSAGES.REGISTER_SUCCESS,
+    ...result
+  })
+}
+
+export const logoutController = async (
+  req: Request<core.ParamsDictionary, any, UserLogoutBody, any, Locals>,
+  res: Response
+) => {
+  const { refresh_token } = req.body
+  const result = await userServices.logout(refresh_token)
+  res.json({
     ...result
   })
 }

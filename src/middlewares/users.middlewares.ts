@@ -6,6 +6,7 @@ import { databaseService } from '~/services/database.services'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { HttpStatus } from '~/constants/http-status'
+import { JsonWebTokenError } from 'jsonwebtoken'
 
 export const loginValidator = checkSchema(
   {
@@ -181,13 +182,58 @@ export const accessTokenValidator = checkSchema(
               status: HttpStatus.UNAUTHORIZED
             })
           }
-
-          const decoded_authorization = await verifyToken({ token: accessToken })
-          req.decoded_authorization = decoded_authorization
+          try {
+            const decoded_authorization = await verifyToken({ token: accessToken })
+            req.decoded_authorization = decoded_authorization
+          } catch (e) {
+            throw new ErrorWithStatus({
+              message: (e as JsonWebTokenError).message,
+              status: HttpStatus.UNAUTHORIZED
+            })
+          }
           return true
         }
       }
     }
   },
   ['headers']
+)
+
+export const refreshTokenValidator = checkSchema(
+  {
+    refresh_token: {
+      notEmpty: {
+        errorMessage: USER_MESSAGES.REFRESH_TOKEN_IS_REQUIRED
+      },
+      custom: {
+        options: async (value, { req }) => {
+          try {
+            const [decoded_refresh_token, refresh_token] = await Promise.all([
+              verifyToken({ token: value }),
+              databaseService.refreshTokens.findOne({ token: value })
+            ])
+
+            if (!refresh_token) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGES.REFRESH_TOKEN_NOT_FOUND,
+                status: HttpStatus.UNAUTHORIZED
+              })
+            }
+
+            req.decoded_refresh_token = decoded_refresh_token
+          } catch (e) {
+            if (e instanceof JsonWebTokenError) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGES.REFRESH_TOKEN_IS_INVALID,
+                status: HttpStatus.UNAUTHORIZED
+              })
+            }
+            throw e
+          }
+          return true
+        }
+      }
+    }
+  },
+  ['body']
 )

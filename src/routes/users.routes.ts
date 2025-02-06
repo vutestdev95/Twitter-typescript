@@ -1,9 +1,13 @@
 import express from 'express'
-import { accessTokenValidator, loginValidator, registerValidator } from '~/middlewares/users.middlewares'
-import { loginController, registerController } from '~/controllers/users.controllers'
+import {
+  accessTokenValidator,
+  loginValidator,
+  refreshTokenValidator,
+  registerValidator
+} from '~/middlewares/users.middlewares'
+import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
 import { validate } from '~/utils/validation'
 import { wrapRequestHandler } from '~/utils/handlers'
-import { USER_MESSAGES } from '~/constants/messages'
 
 const usersRouter = express.Router()
 
@@ -27,10 +31,11 @@ usersRouter.post('/register', validate(registerValidator), wrapRequestHandler(re
  body: {refresh_token : string}
  **/
 
-usersRouter.post('/logout', validate(accessTokenValidator), (req, res, next) => {
-  res.json({
-    message: USER_MESSAGES.LOGOUT_SUCCESS
-  })
-})
+usersRouter.post(
+  '/logout',
+  validate(accessTokenValidator),
+  validate(refreshTokenValidator),
+  wrapRequestHandler(logoutController)
+)
 
 export default usersRouter

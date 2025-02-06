@@ -27,5 +27,8 @@ export enum USER_MESSAGES {
   REGISTER_SUCCESS = 'Register success',
   LOGOUT_SUCCESS = 'Logout success',
 
-  ACCESS_TOKEN_IS_REQUIRED = 'Access token is required'
+  ACCESS_TOKEN_IS_REQUIRED = 'Access token is required',
+  REFRESH_TOKEN_IS_REQUIRED = 'Refresh token is required',
+  REFRESH_TOKEN_IS_INVALID = 'Refresh token is invalid',
+  REFRESH_TOKEN_NOT_FOUND = 'Refresh token not found'
 }
