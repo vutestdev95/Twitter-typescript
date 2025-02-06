@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
+import { ErrorWithStatus } from '~/models/Error'
 
 export const signToken = async ({
   payload,
@@ -19,6 +20,23 @@ export const signToken = async ({
         throw new Error(error.message)
       }
       resolve(encoded as string)
+    })
+  })
+}
+
+export const verifyToken = ({
+  token,
+  secretOrPublicKey = process.env.JWT_SECRET as string
+}: {
+  token: string
+  secretOrPublicKey?: string
+}) => {
+  return new Promise<jwt.JwtPayload>((resolve, reject) => {
+    jwt.verify(token, secretOrPublicKey, (error, decoded) => {
+      if (error) {
+        reject(new ErrorWithStatus({ message: error.message, status: 401 }))
+      }
+      resolve(decoded as jwt.JwtPayload)
     })
   })
 }

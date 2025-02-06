@@ -6,6 +6,7 @@ import { signToken } from '~/utils/jwt'
 import { jwtExpiresIn, tokenTypes } from '~/constants/enum'
 import { ObjectId } from 'mongodb'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
+import { USER_MESSAGES } from '~/constants/messages'
 
 class UserServices {
   async register(payload: UserRegisterReqBody) {
@@ -41,6 +42,13 @@ class UserServices {
     return {
       accessToken,
       refreshToken
+    }
+  }
+
+  async logout(refresh_token: string) {
+    await databaseService.refreshTokens.deleteOne({ token: refresh_token })
+    return {
+      message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
 
